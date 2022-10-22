@@ -28,10 +28,11 @@ export const actions = {
       return invalid(400, { name, message, missing_message: true })
     }
 
-    const filterResult = filterText(message)
+    const filterName = filterText(name)
+    const filterMessage = filterText(message)
 
-    if (!filterResult.result) {
-      return invalid(400, { name, message, filtered_message: true })
+    if (!filterName.result || !filterMessage.result) {
+      return invalid(400, { name, message, failed_filter: true })
     }
 
     const entriesCollection = await db.collection('entries')

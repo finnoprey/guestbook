@@ -139,7 +139,6 @@ function filterText(text) {
 
   processedTest = convertToRaw(processedTest)
   processedTest = removeRepeatCharacters(processedTest)
-  console.log('rawtext: ' + processedTest)
 
   if (checkVariationsForBlacklistedWords(processedTest)) {
     reasons.push('BLV: blacklisted words')

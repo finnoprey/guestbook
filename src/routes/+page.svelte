@@ -9,7 +9,7 @@
   {#if form?.success} <p class="success">Successfully sent message!</p> {/if}
   {#if form?.missing_name} <p class="error">Please enter a name!</p> {/if}
 	{#if form?.missing_message} <p class="error">Please enter a message!</p> {/if}
-  {#if form?.filtered_message} <p class="error">Your message includes blocked terms.</p> {/if}
+  {#if form?.failed_filter} <p class="error">Your message or title includes blocked terms.</p> {/if}
 
   <p>Name</p>
   <input name="name" type="text" value={form?.name ?? ''} required>
