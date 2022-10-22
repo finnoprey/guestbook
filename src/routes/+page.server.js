@@ -28,6 +28,12 @@ export const actions = {
       return invalid(400, { name, message, missing_message: true })
     }
 
+    const filterResult = filterText(message)
+
+    if (!filterResult.result) {
+      return invalid(400, { name, message, filtered_message: true })
+    }
+
     const entriesCollection = await db.collection('entries')
     await entriesCollection.insertOne({
       name: name,

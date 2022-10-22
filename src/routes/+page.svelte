@@ -9,11 +9,12 @@
   {#if form?.success} <p class="success">Successfully sent message!</p> {/if}
   {#if form?.missing_name} <p class="error">Please enter a name!</p> {/if}
 	{#if form?.missing_message} <p class="error">Please enter a message!</p> {/if}
+  {#if form?.filtered_message} <p class="error">Your message includes blocked terms.</p> {/if}
 
   <p>Name</p>
-  <input name="name" type="text" value={form?.name ?? ''}>
+  <input name="name" type="text" value={form?.name ?? ''} required>
   <p>Message</p>
-  <input name="message" type="text" value={form?.message ?? ''}>
+  <input name="message" type="text" value={form?.message ?? ''} required>
   <br><br>
   <button>Send</button>
 </form>
