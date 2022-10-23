@@ -1,45 +1,35 @@
 import { FILTER_BLACKLIST, ALLOWED_LETTERS, ALLOWED_SYMBOLS } from '$env/static/private'
 
-function editDistance(s1, s2) {
-  s1 = s1.toLowerCase();
-  s2 = s2.toLowerCase();
+function similarity(a, b) {
+  if (a.length === 0) return b.length;
+  if (b.length === 0) return a.length
 
-  var costs = new Array();
-  for (var i = 0; i <= s1.length; i++) {
-    var lastValue = i;
-    for (var j = 0; j <= s2.length; j++) {
-      if (i == 0)
-        costs[j] = j;
-      else {
-        if (j > 0) {
-          var newValue = costs[j - 1];
-          if (s1.charAt(i - 1) != s2.charAt(j - 1))
-            newValue = Math.min(Math.min(newValue, lastValue),
-              costs[j]) + 1;
-          costs[j - 1] = lastValue;
-          lastValue = newValue;
-        }
+  let matrix = []
+
+  for (let i = 0; i <= b.length; i++) {
+    matrix[i] = [i]
+  }
+
+  for (let j = 0; j <= a.length; j++) {
+    matrix[0][j] = j
+  }
+
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b.charAt(i - 1) == a.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1]
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1, 
+          Math.min(matrix[i][j - 1] + 1, 
+          matrix[i - 1][j] + 1)
+        )
       }
     }
-    if (i > 0)
-      costs[s2.length] = lastValue;
   }
-  return costs[s2.length];
-}
 
-function similarity(s1, s2) {
-  var longer = s1;
-  var shorter = s2;
-  if (s1.length < s2.length) {
-    longer = s2;
-    shorter = s1;
-  }
-  var longerLength = longer.length;
-  if (longerLength == 0) {
-    return 1.0;
-  }
-  return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
-}
+  return matrix[b.length][a.length]
+};
 
 function removeRepeatCharacters(text) {
   let characters = text.split('')
@@ -57,12 +47,11 @@ function removeRepeatCharacters(text) {
 function generateAllPossibleVariations(text) {
   let length = text.length
   let variations = []
-  for (let a = 0; a < length; a++) {
-    // a = 0
-    let b = a + 1
-    while (b < length + 1) {
-      variations.push(text.slice(a, b))
-      b++
+  for (let begin = 0; begin < length; begin++) {
+    let end = begin + 1
+    while (end < length + 1) {
+      variations.push(text.slice(begin, end))
+      end++
     }
   }
 
@@ -76,10 +65,15 @@ function containsBlacklistedWords(text) {
       if (word == blacklistedWord) {
         failed = true
       }
-      let similarityScore = similarity(blacklistedWord, word)
-      if (similarityScore > 0.8) {
-        failed = true
-      }
+      
+      // There is no way as of current to properly check similarity.
+      // This functionality has been removed for now.
+
+      // let similarityScore = similarity(blacklistedWord, word)
+      // if (similarityScore < 2) {
+      //   console.log(similarityScore + ' to ' + blacklistedWord)
+      //   failed = true
+      // }
     })
   })
   return failed
@@ -132,13 +126,11 @@ function filterText(text) {
   let reasons = []
 
   let processedTest = convertToRaw(text)
+  processedTest = removeRepeatCharacters(processedTest)
 
   if (containsDisallowedSymbols(processedTest)) {
     reasons.push('DAS: disallowed symbols')
   }
-
-  processedTest = convertToRaw(processedTest)
-  processedTest = removeRepeatCharacters(processedTest)
 
   if (checkVariationsForBlacklistedWords(processedTest)) {
     reasons.push('BLV: blacklisted words')
