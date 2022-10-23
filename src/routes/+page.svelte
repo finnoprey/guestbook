@@ -1,15 +1,22 @@
 <script>
+  import { onMount } from 'svelte'
+
   export let data
   export let form
 
   let entries = data.entries
+
+  // Remove parameters for form re-submission if request was successful.
+  if (form?.success) {
+    onMount(() => {
+      window.history.pushState({}, '', window.location.href.split('?')[0])
+    })
+  }
 </script>
 
 <form method="POST" action="?/send">
   {#if form?.success} <p class="success">Successfully sent message!</p> {/if}
-  {#if form?.missing_name} <p class="error">Please enter a name!</p> {/if}
-	{#if form?.missing_message} <p class="error">Please enter a message!</p> {/if}
-  {#if form?.failed_filter} <p class="error">Your message or title includes blocked terms.</p> {/if}
+  {#if form?.error} <p class="error">{form?.error.message ?? ''}</p> {/if}
 
   <p>Name</p>
   <input name="name" type="text" value={form?.name ?? ''} required>

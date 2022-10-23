@@ -21,18 +21,28 @@ export const actions = {
     const message = data.get('message')
 
     if (!name) {
-      return invalid(400, { name, message, missing_name: true })
+      return invalid(400, { 
+        error: {
+          message: 'Please include a name.'
+        }
+       })
     }
 
     if (!message) {
-      return invalid(400, { name, message, missing_message: true })
+      return invalid(400, {
+        error: {
+          message: 'Please include a message.'
+        }
+      })
     }
 
     const filterName = filterText(name)
     const filterMessage = filterText(message)
 
     if (!filterName.result || !filterMessage.result) {
-      return invalid(400, { name, message, failed_filter: true })
+      return invalid(400, { name, message, error: {
+        message: 'Your message or title includes blocked terms.'
+      }})
     }
 
     const entriesCollection = await db.collection('entries')

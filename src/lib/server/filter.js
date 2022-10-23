@@ -129,11 +129,11 @@ function filterText(text) {
   processedTest = removeRepeatCharacters(processedTest)
 
   if (containsDisallowedSymbols(processedTest)) {
-    reasons.push('DAS: disallowed symbols')
+    reasons.push('Disallowed Symbols')
   }
 
   if (checkVariationsForBlacklistedWords(processedTest)) {
-    reasons.push('BLV: blacklisted words')
+    reasons.push('Blacklisted Phrases')
   }
   
   if (reasons.length == 0) {
