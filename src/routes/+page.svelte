@@ -28,9 +28,13 @@
 
 <br><hr>
 
-{#each entries as entry, i}
-  <h2>{entry.name}</h2>
-  <p>{entry.message}</p>
+{#each entries as e, i}
+  <h2>{e.name}</h2>
+  <h4>
+    {e.timestamp.getDate()}/{e.timestamp.getMonth()}/{e.timestamp.getFullYear()} 
+    {e.timestamp.getHours()}:{e.timestamp.getMinutes()}:{e.timestamp.getSeconds()}
+  </h4>
+  <p>{e.message}</p>
 {/each}
 
 <style>

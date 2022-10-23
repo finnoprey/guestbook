@@ -6,8 +6,11 @@ export async function load({ params }) {
   const entriesCollection = await db.collection('entries')
   const entries = await entriesCollection.find().toArray()
 
-  // replace non-pojo property (ObjectId) with a string for serialization
-  entries.forEach(e => e._id = e._id.toString())
+  // Replace non-pojo property (ObjectId) with serializable properties
+  entries.forEach(entry => {
+    entry.timestamp = entry._id.getTimestamp()
+    entry._id = entry._id.toString()
+  })
 
   return {
     entries: entries.reverse(),
